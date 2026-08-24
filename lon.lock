@@ -15,10 +15,10 @@
       "type": "Git",
       "fetchType": "git",
       "branch": "main",
-      "revision": "8ae99737831a1d4828ea434cb2f08d525e0c29a2",
+      "revision": "52d2fe7d830b8119126b91908cfdbf71c5cfeeca",
       "url": "https://github.com/systemd/systemd.git",
-      "hash": "sha256-AapyLofMo8e2cFL6TWuoMFEHiIUKk1Bd05AFsiHLlxM=",
-      "lastModified": 1787574176,
+      "hash": "sha256-hzWZy7Wcyf5xChbMCKlJhpKyoUy+SPVw2b9KVOSJ14s=",
+      "lastModified": 1787585557,
       "submodules": false
     }
   }
