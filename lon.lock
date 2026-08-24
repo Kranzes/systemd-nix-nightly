@@ -1,0 +1,25 @@
+{
+  "version": "1",
+  "sources": {
+    "nixpkgs": {
+      "type": "GitHub",
+      "fetchType": "tarball",
+      "owner": "NixOS",
+      "repo": "nixpkgs",
+      "branch": "nixos-unstable",
+      "revision": "56c02bc00adcf003215cc4bd996d6efaf4cff188",
+      "url": "https://github.com/NixOS/nixpkgs/archive/56c02bc00adcf003215cc4bd996d6efaf4cff188.tar.gz",
+      "hash": "sha256-9i/VTdusq/+NM/tz+J1Re+ojkMB8MBf0QshnYfzHz30="
+    },
+    "systemd": {
+      "type": "Git",
+      "fetchType": "git",
+      "branch": "main",
+      "revision": "8ae99737831a1d4828ea434cb2f08d525e0c29a2",
+      "url": "https://github.com/systemd/systemd.git",
+      "hash": "sha256-AapyLofMo8e2cFL6TWuoMFEHiIUKk1Bd05AFsiHLlxM=",
+      "lastModified": 1787574176,
+      "submodules": false
+    }
+  }
+}
