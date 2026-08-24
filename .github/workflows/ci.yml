@@ -10,7 +10,8 @@ jobs:
   eval:
     runs-on: ubuntu-latest
     outputs:
-      derivations: ${{ steps.eval.outputs.derivations }}
+      packages: ${{ steps.eval.outputs.packages }}
+      checks: ${{ steps.eval.outputs.checks }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: NixOS/nix-installer-action@62c1943b776c509394b550f3f983adc14e9212d6 # v1.0.0
@@ -23,12 +24,19 @@ jobs:
       - id: eval
         name: Run nix-eval-jobs
         run: |
-          echo "derivations=$(
-            # TODO: get more compute to run checks
+          derivations=$(
             nix run --impure --expr 'import (import ./lon.nix).nixpkgs { }' nix-eval-jobs -- \
-              --select 'jobs: { packages = removeAttrs jobs.packages [ "rebase-patches" ]; }' \
+              --select 'jobs: {
+                # switchTest OOMs on the runner
+                checks = removeAttrs jobs.checks [ "switchTest" ];
+                packages = removeAttrs jobs.packages [ "rebase-patches" ];
+              }' \
               --check-cache-status . | jq -cs 'map({attr, isCached})'
-          )" >> "$GITHUB_OUTPUT"
+          )
+          {
+            echo "packages=$(jq -c 'map(select(.attr | startswith("packages.")))' <<< "$derivations")"
+            echo "checks=$(jq -c 'map(select(.attr | startswith("checks.")))' <<< "$derivations")"
+          } >> "$GITHUB_OUTPUT"
 
   build:
     needs: eval
@@ -37,7 +45,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        derivation: ${{ fromJson(needs.eval.outputs.derivations) }}
+        derivation: ${{ fromJson(needs.eval.outputs.packages) }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: ${{ !matrix.derivation.isCached }}
@@ -45,6 +53,38 @@ jobs:
         if: ${{ !matrix.derivation.isCached }}
         with:
           installer-version: 2.35.1
+      - uses: Mic92/hestia@f1f4df2801140a36398ed423533c8460618539df # v3.0.1
+        if: ${{ !matrix.derivation.isCached }}
+        with:
+          version: v3.0.1
+          upstream-cache-filter: true
+      - run: nix build -f . '${{ matrix.derivation.attr }}' -L
+        if: ${{ !matrix.derivation.isCached }}
+
+  check:
+    needs:
+      - eval
+      - build
+    runs-on: ubuntu-latest
+    name: check (${{ matrix.derivation.attr }})
+    strategy:
+      fail-fast: false
+      matrix:
+        derivation: ${{ fromJson(needs.eval.outputs.checks) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: ${{ !matrix.derivation.isCached }}
+      - uses: NixOS/nix-installer-action@62c1943b776c509394b550f3f983adc14e9212d6 # v1.0.0
+        if: ${{ !matrix.derivation.isCached }}
+        with:
+          installer-version: 2.35.1
+          # The nspawn container tests set
+          # requiredSystemFeatures = [ "uid-range" ].
+          extra-conf: |
+            auto-allocate-uids = true
+            use-cgroups = true
+            extra-system-features = uid-range
+            extra-experimental-features = auto-allocate-uids cgroups
       - uses: Mic92/hestia@f1f4df2801140a36398ed423533c8460618539df # v3.0.1
         if: ${{ !matrix.derivation.isCached }}
         with:
