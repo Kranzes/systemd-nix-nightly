@@ -4,7 +4,7 @@ set -euo pipefail
 repo=$(git rev-parse --show-toplevel)
 patches_dir=$repo/patches
 base=$(cat "$patches_dir/.base-revision")
-target=$(jq -r '.sources.systemd.revision' "$repo/lon.lock")
+target=$(jq -r '.nodes.systemd.locked.rev' "$repo/flake.lock")
 
 if [ "$base" = "$target" ]; then
   echo "patches are already based on $target"

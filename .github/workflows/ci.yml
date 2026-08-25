@@ -25,13 +25,14 @@ jobs:
         name: Run nix-eval-jobs
         run: |
           derivations=$(
-            nix run --impure --expr 'import (import ./lon.nix).nixpkgs { }' nix-eval-jobs -- \
-              --select 'jobs: {
+            nix run --inputs-from . nixpkgs#nix-eval-jobs -- \
+              --select 'flake: let inherit (builtins) currentSystem; in {
                 # switchTest OOMs on the runner
-                checks = removeAttrs jobs.checks [ "switchTest" ];
-                packages = removeAttrs jobs.packages [ "rebase-patches" ];
+                checks.${currentSystem} = removeAttrs flake.outputs.checks.${currentSystem} [ "switchTest" ];
+                # No need to build rebase-patches in CI
+                packages.${currentSystem} = removeAttrs flake.outputs.packages.${currentSystem} [ "rebase-patches" ];
               }' \
-              --check-cache-status . | jq -cs 'map({attr, isCached})'
+              --impure --force-recurse --check-cache-status --flake . | jq -cs 'map({attr, isCached})'
           )
           {
             echo "packages=$(jq -c 'map(select(.attr | startswith("packages.")))' <<< "$derivations")"
@@ -58,7 +59,7 @@ jobs:
         with:
           version: v3.0.1
           upstream-cache-filter: true
-      - run: nix build -f . '${{ matrix.derivation.attr }}' -L
+      - run: nix build '.#${{ matrix.derivation.attr }}' -L
         if: ${{ !matrix.derivation.isCached }}
 
   check:
@@ -90,5 +91,5 @@ jobs:
         with:
           version: v3.0.1
           upstream-cache-filter: true
-      - run: nix build -f . '${{ matrix.derivation.attr }}' -L
+      - run: nix build '.#${{ matrix.derivation.attr }}' -L
         if: ${{ !matrix.derivation.isCached }}
