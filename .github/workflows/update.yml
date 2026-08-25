@@ -2,8 +2,8 @@ name: Update lon.lock
 
 on:
   schedule:
-    # Weekly, Monday midnight (UTC).
-    - cron: "0 0 * * 1"
+    # Daily, midnight (UTC).
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 permissions:
