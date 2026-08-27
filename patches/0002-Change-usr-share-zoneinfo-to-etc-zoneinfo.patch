@@ -103,7 +103,7 @@ index b7d30ba..2924942 100644
                  return log_error_errno(r, "Failed to create /etc/localtime symlink: %m");
  
 diff --git a/src/nspawn/nspawn.c b/src/nspawn/nspawn.c
-index 7656039..8c13b7f 100644
+index 484151f..f5f7a59 100644
 --- a/src/nspawn/nspawn.c
 +++ b/src/nspawn/nspawn.c
 @@ -1710,8 +1710,8 @@ int userns_mkdir(const char *root, const char *path, mode_t mode, uid_t uid, gid
@@ -118,10 +118,10 @@ index 7656039..8c13b7f 100644
  
  static bool etc_writable(void) {
 diff --git a/src/timedate/timedated.c b/src/timedate/timedated.c
-index 25e6ddc..51a8076 100644
+index 667e426..5ad6f31 100644
 --- a/src/timedate/timedated.c
 +++ b/src/timedate/timedated.c
-@@ -269,7 +269,7 @@ static int context_read_data(Context *c) {
+@@ -270,7 +270,7 @@ static int context_read_data(Context *c) {
  
          r = get_timezone(&t);
          if (r == -EINVAL)
@@ -130,7 +130,7 @@ index 25e6ddc..51a8076 100644
          else if (r < 0)
                  log_warning_errno(r, "Failed to get target of /etc/localtime: %m");
  
-@@ -293,7 +293,7 @@ static int context_write_data_timezone(Context *c) {
+@@ -294,7 +294,7 @@ static int context_write_data_timezone(Context *c) {
  
          if (isempty(c->zone) || streq(c->zone, "UTC")) {
  
@@ -139,7 +139,7 @@ index 25e6ddc..51a8076 100644
  
                          if (unlink(etc_localtime()) < 0 && errno != ENOENT)
                                  return -errno;
-@@ -301,17 +301,20 @@ static int context_write_data_timezone(Context *c) {
+@@ -302,17 +302,20 @@ static int context_write_data_timezone(Context *c) {
                          return 0;
                  }
  
