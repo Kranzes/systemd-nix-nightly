@@ -69,17 +69,32 @@
           inherit (inputs.self.packages.${system}) systemd;
         in
         lib.mapAttrs (_: test: test.extendNixOS { module.systemd.package = lib.mkForce systemd; }) (
-          removeAttrs systemd.passthru.nixosTests [
-            # The nixpkgs test lacks the wait_for_unit("systemd-bless-boot.service")
-            # its sibling bootCounting test has, so it races the entry rename.
-            # Drop when fixed upstream.
-            "systemd-boot-bootCountingSpecialisation"
-            # checkperms.py probes writability with a fixed filename. systemd main
-            # makes /dev/hugepages writable in the MountAPIVFS sandboxes. The test
-            # units share that mount and run concurrently, so their probes collide
-            # on unlink. Drop when checkperms.py is fixed upstream.
-            "systemd-confinement"
-          ]
+          lib.filterAttrs (_: test: test ? extendNixOS) (
+            removeAttrs systemd.passthru.nixosTests (
+              [
+
+                # The nixpkgs test lacks the wait_for_unit("systemd-bless-boot.service")
+                # its sibling bootCounting test has, so it races the entry rename.
+                # Drop when fixed upstream.
+                "systemd-boot-bootCountingSpecialisation"
+                # checkperms.py probes writability with a fixed filename. systemd main
+                # makes /dev/hugepages writable in the MountAPIVFS sandboxes. The test
+                # units share that mount and run concurrently, so their probes collide
+                # on unlink. Drop when checkperms.py is fixed upstream.
+                "systemd-confinement"
+              ]
+              ++ lib.optionals (system != "x86_64-linux") [
+                # Broken eval in nixpkgs on non-x86. Drop when fixed upstream.
+                "systemd-boot-garbage-collect-entry"
+                "systemd-boot-garbageCollectEntryWithBootCounting"
+                "systemd-boot-memtestSortKey"
+                "systemd-binfmt-basic"
+                "systemd-binfmt-chroot"
+                "systemd-binfmt-ldPreload"
+                "systemd-binfmt-preserveArgvZero"
+              ]
+            )
+          )
         )
       );
     };
