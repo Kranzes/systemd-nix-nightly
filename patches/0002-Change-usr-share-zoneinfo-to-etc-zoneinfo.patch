@@ -75,7 +75,7 @@ index 44c5306..9772d8f 100644
                  return -EINVAL;
          if (!timezone_is_valid(e, LOG_DEBUG))
 diff --git a/src/firstboot/firstboot.c b/src/firstboot/firstboot.c
-index b7d30ba..2924942 100644
+index 3478499..2e6afbf 100644
 --- a/src/firstboot/firstboot.c
 +++ b/src/firstboot/firstboot.c
 @@ -631,7 +631,7 @@ static int prompt_timezone(int rfd, sd_varlink **mute_console_link) {
@@ -103,7 +103,7 @@ index b7d30ba..2924942 100644
                  return log_error_errno(r, "Failed to create /etc/localtime symlink: %m");
  
 diff --git a/src/nspawn/nspawn.c b/src/nspawn/nspawn.c
-index 484151f..f5f7a59 100644
+index 7d2a645..c1d1a4c 100644
 --- a/src/nspawn/nspawn.c
 +++ b/src/nspawn/nspawn.c
 @@ -1710,8 +1710,8 @@ int userns_mkdir(const char *root, const char *path, mode_t mode, uid_t uid, gid
@@ -118,7 +118,7 @@ index 484151f..f5f7a59 100644
  
  static bool etc_writable(void) {
 diff --git a/src/timedate/timedated.c b/src/timedate/timedated.c
-index 667e426..5ad6f31 100644
+index e57471f..35c606b 100644
 --- a/src/timedate/timedated.c
 +++ b/src/timedate/timedated.c
 @@ -270,7 +270,7 @@ static int context_read_data(Context *c) {

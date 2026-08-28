@@ -13,7 +13,7 @@ directly.
  1 file changed, 11 insertions(+)
 
 diff --git a/src/timesync/timesyncd.c b/src/timesync/timesyncd.c
-index b5a4455..2489d9b 100644
+index b62d8a6..05c2978 100644
 --- a/src/timesync/timesyncd.c
 +++ b/src/timesync/timesyncd.c
 @@ -23,6 +23,11 @@
