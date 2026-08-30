@@ -74,15 +74,10 @@
               [
                 # OOMs the runner, remove once the splitting is in place: https://github.com/NixOS/nixpkgs/pull/557715
                 "switchTest"
-                # The nixpkgs test lacks the wait_for_unit("systemd-bless-boot.service")
-                # its sibling bootCounting test has, so it races the entry rename.
-                # Drop when fixed upstream.
+                # RACES
                 "systemd-boot-bootCountingSpecialisation"
-                # checkperms.py probes writability with a fixed filename. systemd main
-                # makes /dev/hugepages writable in the MountAPIVFS sandboxes. The test
-                # units share that mount and run concurrently, so their probes collide
-                # on unlink. Drop when checkperms.py is fixed upstream.
                 "systemd-confinement"
+                "systemd-timesyncd-nscd-dnssec"
               ]
               ++ lib.optionals (system != "x86_64-linux") [
                 # Broken eval in nixpkgs on non-x86. Drop when fixed upstream.
