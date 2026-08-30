@@ -72,7 +72,8 @@
           lib.filterAttrs (_: test: test ? extendNixOS) (
             removeAttrs systemd.passthru.nixosTests (
               [
-
+                # OOMs the runner, remove once the splitting is in place: https://github.com/NixOS/nixpkgs/pull/557715
+                "switchTest"
                 # The nixpkgs test lacks the wait_for_unit("systemd-bless-boot.service")
                 # its sibling bootCounting test has, so it races the entry rename.
                 # Drop when fixed upstream.
