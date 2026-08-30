@@ -80,7 +80,7 @@
                 "systemd-timesyncd-nscd-dnssec"
               ]
               ++ lib.optionals (system != "x86_64-linux") [
-                # Broken eval in nixpkgs on non-x86. Drop when fixed upstream.
+                # Broken in nixpkgs on non-x86. Drop when fixed upstream.
                 "systemd-boot-garbage-collect-entry"
                 "systemd-boot-garbageCollectEntryWithBootCounting"
                 "systemd-boot-memtestSortKey"
@@ -88,6 +88,7 @@
                 "systemd-binfmt-chroot"
                 "systemd-binfmt-ldPreload"
                 "systemd-binfmt-preserveArgvZero"
+                "systemd-boot-specialisation"
               ]
             )
           )
