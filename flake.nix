@@ -68,7 +68,10 @@
         let
           inherit (inputs.self.packages.${system}) systemd;
         in
-        lib.mapAttrs (_: test: test.extendNixOS { module.systemd.package = lib.mkForce systemd; }) (
+        {
+          systemd-package = systemd;
+        }
+        // lib.mapAttrs (_: test: test.extendNixOS { module.systemd.package = lib.mkForce systemd; }) (
           lib.filterAttrs (_: test: test ? extendNixOS) (
             removeAttrs systemd.passthru.nixosTests (
               [
