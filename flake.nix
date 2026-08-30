@@ -80,6 +80,7 @@
                 # RACES
                 "systemd-boot-bootCountingSpecialisation"
                 "systemd-confinement"
+                "systemd-networkd-vrf"
                 "systemd-timesyncd-nscd-dnssec"
               ]
               ++ lib.optionals (system != "x86_64-linux") [
