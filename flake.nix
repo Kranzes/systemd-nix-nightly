@@ -75,11 +75,7 @@
           lib.filterAttrs (_: test: test ? extendNixOS) (
             removeAttrs systemd.passthru.nixosTests (
               [
-                # OOMs the runner, remove once the splitting is in place: https://github.com/NixOS/nixpkgs/pull/557715
-                "switchTest"
                 # RACES
-                "systemd-boot-bootCountingSpecialisation"
-                "systemd-confinement"
                 "systemd-networkd-vrf"
                 "systemd-timesyncd-nscd-dnssec"
               ]
