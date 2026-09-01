@@ -2,7 +2,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     systemd = {
-      url = "github:systemd/systemd";
+      url = "github:systemd/systemd/v262-rc1";
       flake = false;
     };
     flake-compat = {
