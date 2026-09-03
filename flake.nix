@@ -74,12 +74,8 @@
         // lib.mapAttrs (_: test: test.extendNixOS { module.systemd.package = lib.mkForce systemd; }) (
           lib.filterAttrs (_: test: test ? extendNixOS) (
             removeAttrs systemd.passthru.nixosTests (
-              [
-                # RACES
-                "systemd-networkd-vrf"
-                "systemd-timesyncd-nscd-dnssec"
-              ]
-              ++ lib.optionals (system != "x86_64-linux") [
+              lib.optionals (system != "x86_64-linux") [
+
                 # Broken in nixpkgs on non-x86. Drop when fixed upstream.
                 "systemd-boot-garbage-collect-entry"
                 "systemd-boot-garbageCollectEntryWithBootCounting"
