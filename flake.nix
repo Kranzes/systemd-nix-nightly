@@ -19,12 +19,23 @@
         "x86_64-linux"
         "aarch64-linux"
       ];
+
+      nixpkgsFor = forAllSystems (
+        system:
+        import (inputs.nixpkgs.legacyPackages.${system}.applyPatches {
+          name = "nixpkgs-patched";
+          src = inputs.nixpkgs;
+          patches = [
+            ./nixpkgs-patches/0001-nixos-qemu-vm-build-an-ESP-only-image-with-useBootLo.patch
+          ];
+        }) { inherit system; }
+      );
     in
     {
       packages = forAllSystems (
         system:
         let
-          pkgs = inputs.nixpkgs.legacyPackages.${system};
+          pkgs = nixpkgsFor.${system};
         in
         {
           systemd = pkgs.systemd.overrideAttrs (old: {
