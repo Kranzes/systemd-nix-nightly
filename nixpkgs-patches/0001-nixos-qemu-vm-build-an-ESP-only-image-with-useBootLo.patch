@@ -1,4 +1,4 @@
-From 24c51540e4340353caed643981d2442a9dd15f27 Mon Sep 17 00:00:00 2001
+From 9ea6a3c1235ed61375259de975954fecbb9144e0 Mon Sep 17 00:00:00 2001
 From: Ilan Joselevich <personal@ilanjoselevich.com>
 Date: Sat, 5 Sep 2026 22:52:34 +0200
 Subject: [PATCH] nixos/qemu-vm: build an ESP-only image with useBootLoader +
@@ -18,11 +18,11 @@ tests this drops the built images from roughly 32 GB to 1.1 GB.
 
 Assisted-by: Claude:claude-fable-5-1
 ---
- nixos/modules/virtualisation/qemu-vm.nix | 150 ++++++++++++++++++++++-
- 1 file changed, 145 insertions(+), 5 deletions(-)
+ nixos/modules/virtualisation/qemu-vm.nix | 167 ++++++++++++++++++++++-
+ 1 file changed, 162 insertions(+), 5 deletions(-)
 
 diff --git a/nixos/modules/virtualisation/qemu-vm.nix b/nixos/modules/virtualisation/qemu-vm.nix
-index a99dd8f2ec5ee..f6132adb616c9 100644
+index a99dd8f2ec5ee..6876c38b96c1a 100644
 --- a/nixos/modules/virtualisation/qemu-vm.nix
 +++ b/nixos/modules/virtualisation/qemu-vm.nix
 @@ -132,7 +132,7 @@ let
@@ -101,7 +101,7 @@ index a99dd8f2ec5ee..f6132adb616c9 100644
 +        unsafeDiscardReferences.out = true;
 +
 +        nativeBuildInputs = [
-+          config.systemd.package
++          pkgs.buildPackages.systemd
 +          pkgs.util-linux
 +          pkgs.fakeroot
 +          pkgs.dosfstools
@@ -173,7 +173,7 @@ index a99dd8f2ec5ee..f6132adb616c9 100644
        ];
  
      warnings = optional (cfg.directBoot.enable && cfg.useBootLoader) ''
-@@ -1227,10 +1323,43 @@ in
+@@ -1227,10 +1323,60 @@ in
        script = ''
          if [[ "$(cat /proc/cmdline)" =~ regInfo=([^ ]*) ]]; then
            ${lib.getExe' config.nix.package.out "nix-store"} --load-db < "''${BASH_REMATCH[1]}"
@@ -182,21 +182,38 @@ index a99dd8f2ec5ee..f6132adb616c9 100644
 +            ${lib.getExe' config.nix.package.out "nix-store"} --load-db < "$(cat /tmp/xchg/reg-info)"
 +        ''}
          fi
-+        ${lib.optionalString espOnlyImage ''
-+          # Seed generation 1 so generation numbering matches a full system image.
-+          if [ ! -e /nix/var/nix/profiles/system ]; then
-+            ${lib.getExe' config.nix.package.out "nix-env"} -p /nix/var/nix/profiles/system --set /run/current-system
-+          fi
-+        ''}
        '';
      };
  
++    # Seed generation 1 so generation numbering matches a full system image.
++    systemd.services.seed-system-profile = lib.mkIf espOnlyImage {
++      unitConfig = {
++        DefaultDependencies = false;
++        ConditionPathExists = "!/nix/var/nix/profiles/system";
++      };
++      wantedBy = [ "sysinit.target" ];
++      before = [
++        "sysinit.target"
++        "shutdown.target"
++      ];
++      conflicts = [ "shutdown.target" ];
++      restartIfChanged = false;
++      serviceConfig = {
++        Type = "oneshot";
++        RemainAfterExit = true;
++      };
++      script = ''
++        mkdir -p /nix/var/nix/profiles
++        ln -sfn "$(readlink -f /run/current-system)" /nix/var/nix/profiles/system-1-link
++        ln -sfn system-1-link /nix/var/nix/profiles/system
++      '';
++    };
++
 +    # The offline image build cannot write EFI NVRAM, install on first boot.
 +    systemd.services.install-boot-loader =
 +      lib.mkIf (espOnlyImage && config.boot.loader.efi.canTouchEfiVariables)
 +        {
 +          wantedBy = [ "multi-user.target" ];
-+          after = [ "local-fs.target" ];
 +          restartIfChanged = false;
 +          unitConfig = {
 +            ConditionPathExists = "!/var/lib/install-boot-loader.done";
@@ -217,7 +234,7 @@ index a99dd8f2ec5ee..f6132adb616c9 100644
      boot.initrd.availableKernelModules =
        optional (cfg.qemu.diskInterface == "scsi") "sym53c8xx" ++ optional (cfg.tpm.enable) "tpm_tis";
  
-@@ -1377,6 +1506,17 @@ in
+@@ -1377,6 +1523,17 @@ in
            imgCfg.driveConfig
          ]
        ) cfg.emptyDiskImages)
