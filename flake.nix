@@ -38,23 +38,24 @@
           pkgs = nixpkgsFor.${system};
         in
         {
-          systemd = pkgs.systemd.overrideAttrs (old: {
-            version = "${lib.versions.major (lib.fileContents "${inputs.systemd}/meson.version")}-${inputs.systemd.shortRev}";
-            src = inputs.systemd;
-            patches = [
-              ./patches/0001-Don-t-try-to-unmount-nix-or-nix-store.patch
-              ./patches/0002-Change-usr-share-zoneinfo-to-etc-zoneinfo.patch
-              ./patches/0003-add-rootprefix-to-lookup-dir-paths.patch
-              ./patches/0004-path-util.h-add-placeholder-for-DEFAULT_PATH_NORMAL.patch
-              ./patches/0005-core-don-t-taint-on-unmerged-usr.patch
-            ]
-            ++ lib.optionals (pkgs.stdenv.hostPlatform.isLinux && pkgs.stdenv.hostPlatform.isGnu) [
-              ./patches/0006-timesyncd-disable-NSCD-when-DNSSEC-validation-is-dis.patch
-            ];
-            mesonFlags = builtins.filter (f: !lib.hasPrefix "-Dtime-epoch=" f) old.mesonFlags ++ [
-              (lib.mesonOption "time-epoch" (toString inputs.systemd.lastModified))
-            ];
-          });
+          systemd =
+            (pkgs.systemd.override (
+              # systemd/systemd#42695 dropped libgcrypt at runtime, and NixOS/nixpkgs#559244
+              # removes the withGcrypt argument. Delete this once that PR reaches nixos-unstable.
+              lib.optionalAttrs (lib.functionArgs pkgs.systemd.override ? withGcrypt) { withGcrypt = false; }
+            )).overrideAttrs
+              (old: {
+                version = "${lib.versions.major (lib.fileContents "${inputs.systemd}/meson.version")}-${inputs.systemd.shortRev}";
+                src = inputs.systemd;
+                patches = [
+                  ./patches/0001-Change-usr-share-zoneinfo-to-etc-zoneinfo.patch
+                  ./patches/0002-path-util.h-add-placeholder-for-DEFAULT_PATH_NORMAL.patch
+                  ./patches/0003-core-don-t-taint-on-unmerged-usr.patch
+                ];
+                mesonFlags = builtins.filter (f: !lib.hasPrefix "-Dtime-epoch=" f) old.mesonFlags ++ [
+                  (lib.mesonOption "time-epoch" (toString inputs.systemd.lastModified))
+                ];
+              });
 
           # Rebase ./patches from the revision recorded in patches/.base-revision
           # onto the revision locked in flake.lock, then re-export them in
