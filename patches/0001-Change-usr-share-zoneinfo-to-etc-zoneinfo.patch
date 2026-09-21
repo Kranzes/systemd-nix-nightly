@@ -118,7 +118,7 @@ index 7d2a645..c1d1a4c 100644
  
  static bool etc_writable(void) {
 diff --git a/src/timedate/timedated.c b/src/timedate/timedated.c
-index e57471f..35c606b 100644
+index e9c0c56..35c606b 100644
 --- a/src/timedate/timedated.c
 +++ b/src/timedate/timedated.c
 @@ -270,7 +270,7 @@ static int context_read_data(Context *c) {
@@ -155,7 +155,7 @@ index e57471f..35c606b 100644
          }
  
 -        return symlinkat_atomic_full(source, AT_FDCWD, etc_localtime(),
--                                     !secure_getenv("SYSTEMD_ETC_LOCALTIME"));
+-                                     !secure_getenv("SYSTEMD_ETC_LOCALTIME") ? SYMLINK_MAKE_RELATIVE : 0);
 +        /* With zoneinfo being at /etc/zoneinfo instead of /usr/share/zoneinfo on NixOS, and etc_localtime() left untouched
 +         * at /etc/localtime, a relative symlink would look like zoneinfo/UTC instead of ../usr/share/zoneinfo/UTC. This is
 +         * an issue because not just systemd itself (src/basic/time-util.c @@ get_timezone), but also others like icu::TimeZone
