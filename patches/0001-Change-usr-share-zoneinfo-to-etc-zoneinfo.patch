@@ -103,7 +103,7 @@ index 3478499..2e6afbf 100644
                  return log_error_errno(r, "Failed to create /etc/localtime symlink: %m");
  
 diff --git a/src/nspawn/nspawn.c b/src/nspawn/nspawn.c
-index 7d2a645..c1d1a4c 100644
+index 988184a..f51dae0 100644
 --- a/src/nspawn/nspawn.c
 +++ b/src/nspawn/nspawn.c
 @@ -1710,8 +1710,8 @@ int userns_mkdir(const char *root, const char *path, mode_t mode, uid_t uid, gid
