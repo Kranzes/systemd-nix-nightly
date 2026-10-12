@@ -35,10 +35,10 @@ index 3a13e04..4fd5806 100644
      <literal>Etc/UTC</literal>. The resulting link should lead to the
      corresponding binary
 diff --git a/src/basic/time-util.c b/src/basic/time-util.c
-index 44c5306..9772d8f 100644
+index 219223e..2b4bb48 100644
 --- a/src/basic/time-util.c
 +++ b/src/basic/time-util.c
-@@ -1459,7 +1459,7 @@ static int get_timezones_from_zone1970_tab(char ***ret) {
+@@ -1472,7 +1472,7 @@ static int get_timezones_from_zone1970_tab(char ***ret) {
  
          assert(ret);
  
@@ -47,7 +47,7 @@ index 44c5306..9772d8f 100644
          if (!f)
                  return -errno;
  
-@@ -1504,7 +1504,7 @@ static int get_timezones_from_tzdata_zi(char ***ret) {
+@@ -1517,7 +1517,7 @@ static int get_timezones_from_tzdata_zi(char ***ret) {
  
          assert(ret);
  
@@ -56,7 +56,7 @@ index 44c5306..9772d8f 100644
          if (!f)
                  return -errno;
  
-@@ -1619,7 +1619,7 @@ int verify_timezone(const char *name, int log_level) {
+@@ -1632,7 +1632,7 @@ int verify_timezone(const char *name, int log_level) {
          if (p - name >= PATH_MAX)
                  return -ENAMETOOLONG;
  
@@ -65,7 +65,7 @@ index 44c5306..9772d8f 100644
  
          fd = open(t, O_RDONLY|O_CLOEXEC);
          if (fd < 0)
-@@ -1691,7 +1691,7 @@ int get_timezone(char **ret) {
+@@ -1704,7 +1704,7 @@ int get_timezone(char **ret) {
          if (r < 0)
                  return r; /* Return EINVAL if not a symlink */
  
@@ -75,7 +75,7 @@ index 44c5306..9772d8f 100644
                  return -EINVAL;
          if (!timezone_is_valid(e, LOG_DEBUG))
 diff --git a/src/firstboot/firstboot.c b/src/firstboot/firstboot.c
-index 3478499..2e6afbf 100644
+index 5068a28..d384ad7 100644
 --- a/src/firstboot/firstboot.c
 +++ b/src/firstboot/firstboot.c
 @@ -631,7 +631,7 @@ static int prompt_timezone(int rfd, sd_varlink **mute_console_link) {
