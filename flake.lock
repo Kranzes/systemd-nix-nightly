@@ -40,11 +40,11 @@
     "systemd": {
       "flake": false,
       "locked": {
-        "lastModified": 1792547549,
-        "narHash": "sha256-Dh67uBvqFTjpnI5S7B249ZPjJpWU9rOJigKcFr1LoT8=",
+        "lastModified": 1792628036,
+        "narHash": "sha256-eKmVKQYNnO2hrlSerchUU0a2rZkzcgpOQYOMf9b2nzo=",
         "owner": "systemd",
         "repo": "systemd",
-        "rev": "cb90bfff75827a77dc99eec03eaebabac45c2414",
+        "rev": "558da3129cce0f4ab52cc03d7444d12355300daa",
         "type": "github"
       },
       "original": {
