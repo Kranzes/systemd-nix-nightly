@@ -35,7 +35,7 @@ index 3a13e04..4fd5806 100644
      <literal>Etc/UTC</literal>. The resulting link should lead to the
      corresponding binary
 diff --git a/src/basic/time-util.c b/src/basic/time-util.c
-index 219223e..2b4bb48 100644
+index 05709b8..67621cc 100644
 --- a/src/basic/time-util.c
 +++ b/src/basic/time-util.c
 @@ -1472,7 +1472,7 @@ static int get_timezones_from_zone1970_tab(char ***ret) {
@@ -75,7 +75,7 @@ index 219223e..2b4bb48 100644
                  return -EINVAL;
          if (!timezone_is_valid(e, LOG_DEBUG))
 diff --git a/src/firstboot/firstboot.c b/src/firstboot/firstboot.c
-index d35538e..bfe5fa8 100644
+index 071a8f7..f6f46a2 100644
 --- a/src/firstboot/firstboot.c
 +++ b/src/firstboot/firstboot.c
 @@ -631,7 +631,7 @@ static int prompt_timezone(int rfd, sd_varlink **mute_console_link) {
@@ -103,7 +103,7 @@ index d35538e..bfe5fa8 100644
                  return log_error_errno(r, "Failed to create /etc/localtime symlink: %m");
  
 diff --git a/src/nspawn/nspawn.c b/src/nspawn/nspawn.c
-index 2613008..d91315c 100644
+index 078109f..3a4e452 100644
 --- a/src/nspawn/nspawn.c
 +++ b/src/nspawn/nspawn.c
 @@ -1708,8 +1708,8 @@ int userns_mkdir(const char *root, const char *path, mode_t mode, uid_t uid, gid
@@ -118,7 +118,7 @@ index 2613008..d91315c 100644
  
  static bool etc_writable(void) {
 diff --git a/src/timedate/timedated.c b/src/timedate/timedated.c
-index e9c0c56..35c606b 100644
+index 1edf473..ecba475 100644
 --- a/src/timedate/timedated.c
 +++ b/src/timedate/timedated.c
 @@ -270,7 +270,7 @@ static int context_read_data(Context *c) {
