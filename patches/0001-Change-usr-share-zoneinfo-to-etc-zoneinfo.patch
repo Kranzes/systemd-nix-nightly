@@ -75,10 +75,10 @@ index 739a1da..897eada 100644
                  return -EINVAL;
          if (!timezone_is_valid(e, LOG_DEBUG))
 diff --git a/src/firstboot/firstboot.c b/src/firstboot/firstboot.c
-index 0b9689e..086661c 100644
+index 5ec1a24..0a370cf 100644
 --- a/src/firstboot/firstboot.c
 +++ b/src/firstboot/firstboot.c
-@@ -632,7 +632,7 @@ static int prompt_timezone(int rfd, sd_varlink **mute_console_link) {
+@@ -644,7 +644,7 @@ static int prompt_timezone(int rfd, sd_varlink **mute_console_link) {
  
  static int process_timezone(int rfd, sd_varlink **mute_console_link) {
          _cleanup_close_ int pfd = -EBADF;
@@ -87,7 +87,7 @@ index 0b9689e..086661c 100644
          const char *e;
          int r;
  
-@@ -678,12 +678,9 @@ static int process_timezone(int rfd, sd_varlink **mute_console_link) {
+@@ -690,12 +690,9 @@ static int process_timezone(int rfd, sd_varlink **mute_console_link) {
          if (isempty(arg_timezone))
                  return 0;
  
@@ -103,7 +103,7 @@ index 0b9689e..086661c 100644
                  return log_error_errno(r, "Failed to create /etc/localtime symlink: %m");
  
 diff --git a/src/nspawn/nspawn.c b/src/nspawn/nspawn.c
-index 08c1d62..d50fcac 100644
+index 52fd014..aa80b18 100644
 --- a/src/nspawn/nspawn.c
 +++ b/src/nspawn/nspawn.c
 @@ -1709,8 +1709,8 @@ int userns_mkdir(const char *root, const char *path, mode_t mode, uid_t uid, gid
